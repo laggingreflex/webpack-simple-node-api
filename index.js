@@ -8,11 +8,17 @@ module.exports = (config, opts = {}) => {
     devServer,
   });
 
-  function run() {
+  function run({ log = false } = {}) {
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
-      if (error) reject(error)
-      else resolve(stats);
+      const toString = () => stats.toString(config.stats);
+      if (error) {
+        if (log) console.error(toString());
+        reject(error);
+      } else {
+        if (log) console.log(toString());
+        resolve(stats);
+      }
     }));
   }
 
