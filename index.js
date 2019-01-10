@@ -46,6 +46,7 @@ module.exports = (config, opts = {}) => {
     if (opts.hot) {
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
     }
+    config.mode = config.mode || 'development';
     const compiler = webpack(config);
     compiler.hooks.done.tap('webpack-simple-node-api', watcher);
     const server = new WebpackDevServer(compiler, opts);
