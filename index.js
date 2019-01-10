@@ -38,9 +38,10 @@ module.exports = (config, opts = {}) => {
     const opts = {
       inline: true,
       hot: true,
-      port: (config.devServer && config.devServer.port || 8000),
-      host: '0.0.0.0',
+      // port: (config.devServer && config.devServer.port || 8000),
+      host: 'localhost',
       ...options,
+      ...config.devServer,
     };
     WebpackDevServer.addDevServerEntrypoints(config, opts);
     if (opts.hot) {
@@ -50,9 +51,13 @@ module.exports = (config, opts = {}) => {
     const compiler = webpack(config);
     compiler.hooks.done.tap('webpack-simple-node-api', watcher);
     const server = new WebpackDevServer(compiler, opts);
-    return server.listen(opts.port, opts.host, (error) => {
-      if (error) console.error(error);
-      else console.log('Listening at port', opts.port);
-    });
+    return new Promise((resolve, reject) => {
+      const listener = server.listen(opts.port, opts.host, (error) => {
+        if (error) reject(error)
+        const address = listener.address();
+        console.log('Listening at', address);
+        resolve(listener);
+      });
+    })
   }
 };
