@@ -38,7 +38,7 @@ module.exports = (config, opts = {}) => {
     const opts = {
       inline: true,
       hot: true,
-      port: config.devServer.port,
+      port: (config.devServer && config.devServer.port || 8000),
       host: '0.0.0.0',
       ...options,
     };
