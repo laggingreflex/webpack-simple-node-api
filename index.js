@@ -45,6 +45,7 @@ module.exports = (config, opts = {}) => {
     };
     WebpackDevServer.addDevServerEntrypoints(config, opts);
     if (opts.hot) {
+      config.plugins = config.plugins || [];
       config.plugins.push(new webpack.HotModuleReplacementPlugin());
     }
     config.mode = config.mode || 'development';
