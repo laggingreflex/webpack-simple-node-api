@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 
 module.exports = (config, opts = {}) => {
+  const toString = stats => stats.toString(config.stats);
+
   return ({
     run,
     watch,
@@ -11,23 +13,31 @@ module.exports = (config, opts = {}) => {
   function run({ log = false } = {}) {
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
-      const toString = () => stats.toString(config.stats);
       if (error) {
-        if (log) console.error(toString());
+        if (log) console.error(toString(stats));
         reject(error);
       } else {
-        if (log) console.log(toString());
+        if (log) console.log(toString(stats));
         resolve(stats);
       }
     }));
   }
 
-  function watch(options, watcher) {
+  function watch(options = {}, watcher) {
     if (typeof options === 'function') {
       [watcher, options] = [options, {}];
     }
-    if (!watcher) watcher = () => {};
-    return webpack(config).watch(options, watcher);
+    const compiler = webpack(config);
+    compiler.watch(options, (error, stats) => {
+      if (watcher) watcher(error, stats);
+      else if (error) {
+        if (options.log) console.error(toString(stats));
+      } else {
+        if (options.log) console.log(toString(stats));
+      }
+    });
+    console.log(`Webpack is watching files...`);
+    return compiler;
   }
 
   function devServer(options, watcher) {
