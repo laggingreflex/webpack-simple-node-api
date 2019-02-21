@@ -13,9 +13,9 @@ npm i webpack-simple-node-api
 ```js
 const webpack = require('webpack-simple-node-api');
 
-const {run, watch, devServer} = webpack(config);
+const { build, watch, devServer } = webpack(config);
 
-const stats = await run() // === webpack
-watch(opts, watcher)      // === webpack --watch
-devServer(opts, watcher)  // === webpack-dev-server --hot
+build()                     // === webpack
+watch(opts, handler)        // === webpack --watch
+devServer(opts, onCompile)  // === webpack-dev-server --hot
 ```

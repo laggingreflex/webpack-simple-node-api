@@ -4,13 +4,9 @@ const WebpackDevServer = require('webpack-dev-server');
 module.exports = (config, opts = {}) => {
   const toString = stats => stats.toString(config.stats);
 
-  return ({
-    run,
-    watch,
-    devServer,
-  });
+  return { build, devServer, watch };
 
-  function run({ log = false } = {}) {
+  function build({ log = true } = {}) {
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
       if (error) {
@@ -23,13 +19,13 @@ module.exports = (config, opts = {}) => {
     }));
   }
 
-  function watch(options = {}, watcher) {
+  function watch(options = {}, handler) {
     if (typeof options === 'function') {
-      [watcher, options] = [options, {}];
+      [handler, options] = [options, {}];
     }
     const compiler = webpack(config);
     compiler.watch(options, (error, stats) => {
-      if (watcher) watcher(error, stats);
+      if (handler) handler(error, stats);
       else if (error) {
         if (options.log) console.error(toString(stats));
       } else {
@@ -40,11 +36,10 @@ module.exports = (config, opts = {}) => {
     return compiler;
   }
 
-  function devServer(options, watcher) {
+  function devServer(options, onCompile) {
     if (typeof options === 'function') {
-      [watcher, options] = [options, {}];
+      [onCompile, options] = [options, {}];
     }
-    if (!watcher) watcher = () => {};
     const opts = {
       inline: true,
       hot: true,
@@ -60,7 +55,9 @@ module.exports = (config, opts = {}) => {
     }
     config.mode = config.mode || 'development';
     const compiler = webpack(config);
-    compiler.hooks.done.tap('webpack-simple-node-api', watcher);
+    if (onCompile) {
+      compiler.hooks.done.tap('webpack-simple-node-api', onCompile);
+    }
     const server = new WebpackDevServer(compiler, opts);
     return new Promise((resolve, reject) => {
       const listener = server.listen(opts.port, opts.host, (error) => {
