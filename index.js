@@ -9,7 +9,7 @@ module.exports = (config, opts = {}) => {
   function build({ log = true } = {}) {
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
-      if (error) {
+      if (error || stats.hasErrors()) {
         if (log) console.error(toString(stats));
         reject(error);
       } else {
