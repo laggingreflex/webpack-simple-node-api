@@ -62,8 +62,6 @@ module.exports = (config, opts = {}) => {
     return new Promise((resolve, reject) => {
       const listener = server.listen(opts.port, opts.host, (error) => {
         if (error) reject(error)
-        const address = listener.address();
-        console.log('Listening at', address);
         resolve(listener);
       });
     })
