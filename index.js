@@ -1,12 +1,10 @@
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-
 module.exports = (config, opts = {}) => {
   const toString = stats => stats.toString(config.stats);
 
   return { build, devServer, watch };
 
   function build({ log = true } = {}) {
+    const webpack = require('webpack');
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
       if (error || stats.hasErrors()) {
@@ -20,6 +18,7 @@ module.exports = (config, opts = {}) => {
   }
 
   function watch(options = {}, handler) {
+    const webpack = require('webpack');
     if (typeof options === 'function') {
       [handler, options] = [options, {}];
     }
@@ -37,6 +36,8 @@ module.exports = (config, opts = {}) => {
   }
 
   function devServer(options, onCompile) {
+    const webpack = require('webpack');
+    const WebpackDevServer = require('webpack-dev-server');
     if (typeof options === 'function') {
       [onCompile, options] = [options, {}];
     }
