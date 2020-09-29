@@ -5,7 +5,7 @@ Simpler Node API Wrapper for Webpack
 ## Install
 
 ```
-npm i webpack-simple-node-api
+npm i webpack-simple-node-api webpack webpack-dev-server
 ```
 
 ## Usage
