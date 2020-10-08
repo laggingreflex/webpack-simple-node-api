@@ -23,6 +23,10 @@ module.exports = (config, opts = {}) => {
       [handler, options] = [options, {}];
     }
     const compiler = webpack(config);
+    compiler.hooks.watchRun.tap('webpack-simple-node-api', (context, entry) => {
+      if (options.watchRun) options.watchRun(context, entry);
+      else if (options.log) console.log('(Re)compiling...');
+    });
     compiler.watch(options, (error, stats) => {
       if (handler) handler(error, stats);
       else if (error) {
