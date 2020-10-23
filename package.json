@@ -7,5 +7,8 @@
   "peerDependencies": {
     "webpack": "*",
     "webpack-dev-server": "*"
+  },
+  "dependencies": {
+    "webpack-merge": "^5.2.0"
   }
 }
