@@ -1,4 +1,4 @@
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 
 module.exports = (config, opts = {}) => {
   if (Array.isArray(config)) config = merge(config.filter(Boolean));
