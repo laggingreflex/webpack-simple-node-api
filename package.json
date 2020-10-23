@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "laggingreflex/webpack-simple-node-api",
   "peerDependencies": {
-    "webpack": "^4.44.2",
-    "webpack-dev-server": "^3.11.0"
+    "webpack": "*",
+    "webpack-dev-server": "*"
   }
 }
