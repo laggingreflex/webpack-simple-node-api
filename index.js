@@ -63,15 +63,36 @@ module.exports = (config, opts = {}) => {
     }
     config.mode = config.mode || 'development';
     const compiler = webpack(config);
-    if (onCompile) {
-      compiler.hooks.done.tap('webpack-simple-node-api', onCompile);
+    const deferred = defer();
+    let devServer, server;
+    let counter = 1;
+    const resolve = () => {
+      if (!counter--) deferred.resolve({ devServer, server });
     }
-    const server = new WebpackDevServer(compiler, opts);
-    return new Promise((resolve, reject) => {
-      const listener = server.listen(opts.port, opts.host, (error) => {
-        if (error) reject(error)
-        resolve(listener);
-      });
-    })
+
+    compiler.hooks.done.tap('webpack-simple-node-api', (...args) => {
+      if (onCompile) {
+        onCompile(...args)
+      }
+      resolve();
+    });
+
+    devServer = new WebpackDevServer(compiler, opts);
+
+    server = devServer.listen(opts.port, opts.host, (error) => {
+      if (error) deferred.reject(error)
+      resolve();
+    });
+
+    return deferred.promise;
   }
 };
+
+function defer() {
+  const deferred = {};
+  deferred.promise = new Promise((resolve, reject) => {
+    deferred.resolve = resolve;
+    deferred.reject = reject;
+  });
+  return deferred;
+}
