@@ -10,11 +10,12 @@ module.exports = (config, opts = {}) => {
     const webpack = require('webpack');
     const compiler = webpack(config);
     return new Promise((resolve, reject) => compiler.run((error, stats) => {
+      const string = toString(stats);
       if (error || stats.hasErrors()) {
-        if (log) console.error(toString(stats));
-        reject(error);
+        if (log) console.error(string);
+        reject(error || stats.compilation?.errors?.[0]);
       } else {
-        if (log) console.log(toString(stats));
+        if (log) console.log(string);
         resolve(stats);
       }
     }));
