@@ -5,10 +5,10 @@
   "main": "index.js",
   "repository": "laggingreflex/webpack-simple-node-api",
   "peerDependencies": {
-    "webpack": "*",
-    "webpack-dev-server": "*"
+    "webpack": "^5.0.0",
+    "webpack-dev-server": "^4.9.0"
   },
   "dependencies": {
-    "webpack-merge": "^5.2.0"
+    "webpack-merge": "^5.0.0"
   }
 }

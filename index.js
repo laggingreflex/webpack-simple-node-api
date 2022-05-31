@@ -43,21 +43,21 @@ module.exports = (config, opts = {}) => {
     return compiler;
   }
 
-  function devServer(options, onCompile) {
+  async function devServer(options, onCompile) {
     const webpack = require('webpack');
     const WebpackDevServer = require('webpack-dev-server');
     if (typeof options === 'function') {
       [onCompile, options] = [options, {}];
     }
     const opts = {
-      inline: true,
-      hot: true,
+      // inline: true,
+      // hot: true,
       // port: (config.devServer && config.devServer.port || 8000),
       host: 'localhost',
       ...options,
       ...config.devServer,
     };
-    WebpackDevServer.addDevServerEntrypoints(config, opts);
+    // WebpackDevServer.addDevServerEntrypoints(config, opts);
     if (opts.hot) {
       config.plugins = config.plugins || [];
       // config.plugins.push(new webpack.HotModuleReplacementPlugin());
@@ -65,10 +65,10 @@ module.exports = (config, opts = {}) => {
     config.mode = config.mode || 'development';
     const compiler = webpack(config);
     const deferred = defer();
-    let devServer, server;
+    let devServer;
     let counter = 1;
     const resolve = () => {
-      if (!counter--) deferred.resolve({ devServer, server });
+      if (!counter--) deferred.resolve(devServer);
     }
 
     compiler.hooks.done.tap('webpack-simple-node-api', (...args) => {
@@ -78,12 +78,9 @@ module.exports = (config, opts = {}) => {
       resolve();
     });
 
-    devServer = new WebpackDevServer(compiler, opts);
+    devServer = new WebpackDevServer(opts, compiler);
 
-    server = devServer.listen(opts.port, opts.host, (error) => {
-      if (error) deferred.reject(error)
-      resolve();
-    });
+    await devServer.start(opts.port, opts.host);
 
     return deferred.promise;
   }
